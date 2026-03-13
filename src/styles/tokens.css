@@ -1,0 +1,73 @@
+/* ============================================
+   STAMP IT. — DESIGN TOKENS
+   All visual decisions live here.
+   Change a value here = changes the whole app.
+   ============================================ */
+
+:root {
+
+  /* ── Colours ── */
+  --color-brand-primary:     #6B4FBB;
+  --color-brand-secondary:   #F0EDFB;
+  --color-brand-accent:      #FF6B6B;
+
+  --color-card-bg:           #FFF8F0;
+  --color-card-border:       #E8D5B0;
+
+  --color-stamp-empty:       #EDE8F8;
+  --color-stamp-filled:      #6B4FBB;
+  --color-stamp-ink:         #FFFFFF;
+
+  --color-text-primary:      #1E1240;
+  --color-text-secondary:    #777777;
+  --color-text-on-dark:      #FFFFFF;
+
+  --color-bg-page:           #F8F5FF;
+
+  --color-crisis-bg:         #FFF3F3;
+  --color-crisis-accent:     #C0392B;
+
+  /* ── Typography ── */
+  --font-display:            'Playfair Display', serif;
+  --font-body:               'Inter', sans-serif;
+  --font-stamp:              'Courier New', monospace;
+
+  --font-size-xs:            12px;
+  --font-size-sm:            14px;
+  --font-size-base:          16px;
+  --font-size-lg:            20px;
+  --font-size-xl:            28px;
+  --font-size-2xl:           40px;
+
+  --font-weight-regular:     400;
+  --font-weight-medium:      500;
+  --font-weight-bold:        700;
+
+  /* ── Spacing ── */
+  --space-xs:                4px;
+  --space-sm:                8px;
+  --space-md:                16px;
+  --space-lg:                24px;
+  --space-xl:                40px;
+  --space-2xl:               64px;
+
+  /* ── Shape ── */
+  --radius-card:             16px;
+  --radius-stamp:            50%;
+  --radius-button:           12px;
+  --radius-input:            10px;
+
+  /* ── Stamp ── */
+  --stamp-size:              64px;
+  --stamp-grid-gap:          12px;
+
+  /* ── Shadows ── */
+  --shadow-card:             0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-stamp:            0 2px 8px rgba(107, 79, 187, 0.3);
+
+  /* ── Transitions ── */
+  --transition-stamp:        0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-card-flip:    0.6s ease-in-out;
+  --transition-default:      0.2s ease;
+
+}
