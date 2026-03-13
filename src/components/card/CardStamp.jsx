@@ -1,12 +1,11 @@
 // ============================================
 // STAMP IT. — CardStamp
-// Single stamp slot.
-// state: empty | filled
 // ============================================
 
-export default function CardStamp({ filled, index }) {
+export default function CardStamp({ filled, index, isNew }) {
   return (
     <div
+      className={filled ? (isNew ? 'stamp-filled' : '') : ''}
       style={{
         width: 'var(--stamp-size)',
         height: 'var(--stamp-size)',
@@ -20,8 +19,6 @@ export default function CardStamp({ filled, index }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        transition: 'var(--transition-stamp)',
-        transform: filled ? 'scale(1)' : 'scale(0.95)',
         boxShadow: filled ? 'var(--shadow-stamp)' : 'none',
       }}
     >

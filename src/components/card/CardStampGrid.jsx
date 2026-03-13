@@ -1,11 +1,10 @@
 // ============================================
 // STAMP IT. — CardStampGrid
-// 2x5 grid of 10 CardStamp components.
 // ============================================
 
 import CardStamp from './CardStamp';
 
-export default function CardStampGrid({ stampCount }) {
+export default function CardStampGrid({ stampCount, newestStamp }) {
   return (
     <div style={{
       display: 'grid',
@@ -15,7 +14,12 @@ export default function CardStampGrid({ stampCount }) {
       padding: 'var(--space-md) 0',
     }}>
       {Array.from({ length: 10 }).map((_, i) => (
-        <CardStamp key={i} filled={i < stampCount} index={i} />
+        <CardStamp
+          key={i}
+          filled={i < stampCount}
+          index={i}
+          isNew={i === newestStamp}
+        />
       ))}
     </div>
   );

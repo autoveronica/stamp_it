@@ -11,30 +11,27 @@ import OutcomeScreen from '@/components/outcome/OutcomeScreen';
 const STORAGE_KEY = 'stampit_card';
 
 export default function Home() {
-  const [screen, setScreen] = useState('loading');
-  const [userData, setUserData] = useState(null);
+  const [screen, setScreen]       = useState('loading');
+  const [userData, setUserData]   = useState(null);
+  const [isFirstVisit, setIsFirstVisit] = useState(false);
 
-  // on first load, check if user has a saved card
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
       setUserData(parsed);
-      if (parsed.stampCount >= 10) {
-        setScreen('outcome');
-      } else {
-        setScreen('card');
-      }
+      setIsFirstVisit(false);
+      setScreen(parsed.stampCount >= 10 ? 'outcome' : 'card');
     } else {
       setScreen('onboarding');
     }
   }, []);
 
   function handleOnboardingComplete(data) {
-    // first stamp is added automatically on card creation
     const newCard = { ...data, stampCount: 1 };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newCard));
     setUserData(newCard);
+    setIsFirstVisit(true);
     setScreen('card');
   }
 
@@ -44,21 +41,14 @@ export default function Home() {
     setUserData(updated);
   }
 
-  function handleCrisis() {
-    setScreen('crisis');
-  }
-
-  function handleReturnFromCrisis() {
-    setScreen('onboarding');
-  }
-
-  function handleCardComplete() {
-    setScreen('outcome');
-  }
+  function handleCrisis() { setScreen('crisis'); }
+  function handleReturnFromCrisis() { setScreen('onboarding'); }
+  function handleCardComplete() { setScreen('outcome'); }
 
   function handleNewCard() {
     localStorage.removeItem(STORAGE_KEY);
     setUserData(null);
+    setIsFirstVisit(false);
     setScreen('onboarding');
   }
 
@@ -87,6 +77,7 @@ export default function Home() {
           stampCount={userData?.stampCount || 1}
           onStamp={handleStamp}
           onComplete={handleCardComplete}
+          isFirstVisit={isFirstVisit}
         />
       )}
 
