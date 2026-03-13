@@ -9,18 +9,29 @@ import DecisionCard from '@/components/card/DecisionCard';
 import OutcomeScreen from '@/components/outcome/OutcomeScreen';
 
 const STORAGE_KEY = 'stampit_card';
+const COOLDOWN_SECONDS = 60;
 
 export default function Home() {
-  const [screen, setScreen]       = useState('loading');
-  const [userData, setUserData]   = useState(null);
-  const [isFirstVisit, setIsFirstVisit] = useState(false);
+  const [screen, setScreen]                   = useState('loading');
+  const [userData, setUserData]               = useState(null);
+  const [isFirstVisit, setIsFirstVisit]       = useState(false);
+  const [initialCooldown, setInitialCooldown] = useState(0);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
       setUserData(parsed);
-      setIsFirstVisit(false);
+
+      // if seenFirstVisit is saved, this is a return user
+      setIsFirstVisit(!parsed.seenFirstVisit);
+
+      if (parsed.lastStampTime) {
+        const elapsed   = Math.floor((Date.now() - parsed.lastStampTime) / 1000);
+        const remaining = Math.max(0, COOLDOWN_SECONDS - elapsed);
+        setInitialCooldown(remaining);
+      }
+
       setScreen(parsed.stampCount >= 10 ? 'outcome' : 'card');
     } else {
       setScreen('onboarding');
@@ -28,15 +39,25 @@ export default function Home() {
   }, []);
 
   function handleOnboardingComplete(data) {
-    const newCard = { ...data, stampCount: 1 };
+    // seenFirstVisit is false — not yet seen
+    const newCard = { ...data, stampCount: 1, lastStampTime: Date.now(), seenFirstVisit: false };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newCard));
     setUserData(newCard);
     setIsFirstVisit(true);
+    setInitialCooldown(0);
     setScreen('card');
   }
 
+  function handleFirstVisitSeen() {
+    // mark first visit as seen in localStorage
+    const updated = { ...userData, seenFirstVisit: true, lastStampTime: Date.now() };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    setUserData(updated);
+    setIsFirstVisit(false);
+  }
+
   function handleStamp(newCount) {
-    const updated = { ...userData, stampCount: newCount };
+    const updated = { ...userData, stampCount: newCount, lastStampTime: Date.now() };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     setUserData(updated);
   }
@@ -49,6 +70,7 @@ export default function Home() {
     localStorage.removeItem(STORAGE_KEY);
     setUserData(null);
     setIsFirstVisit(false);
+    setInitialCooldown(0);
     setScreen('onboarding');
   }
 
@@ -78,6 +100,8 @@ export default function Home() {
           onStamp={handleStamp}
           onComplete={handleCardComplete}
           isFirstVisit={isFirstVisit}
+          initialCooldown={initialCooldown}
+          onFirstVisitSeen={handleFirstVisitSeen}
         />
       )}
 

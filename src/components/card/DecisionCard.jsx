@@ -17,12 +17,14 @@ export default function DecisionCard({
   onComplete,
   isFirstVisit,
   initialCooldown,
+  onFirstVisitSeen,
 }) {
-  const [isFlipped, setIsFlipped]     = useState(isFirstVisit ? false : true);
-  const [newestStamp, setNewestStamp] = useState(null);
-  const [localCount, setLocalCount]   = useState(stampCount);
-  const [timeLeft, setTimeLeft]       = useState(isFirstVisit ? 0 : initialCooldown || 0);
-  const [justStamped, setJustStamped] = useState(false);
+  const [isFlipped, setIsFlipped]         = useState(isFirstVisit ? false : true);
+  const [newestStamp, setNewestStamp]     = useState(null);
+  const [localCount, setLocalCount]       = useState(stampCount);
+  const [timeLeft, setTimeLeft]           = useState(isFirstVisit ? 0 : initialCooldown || 0);
+  const [justStamped, setJustStamped]     = useState(false);
+  const [showingFirstVisit, setShowingFirstVisit] = useState(isFirstVisit);
 
   // countdown ticker
   useEffect(() => {
@@ -53,18 +55,19 @@ export default function DecisionCard({
     }
   }
 
-  function handleGotIt() {
+  // first visit "Got it" — marks seen, flips front, starts cooldown
+  function handleFirstVisitGotIt() {
+    onFirstVisitSeen();
+    setShowingFirstVisit(false);  // ← key fix: update local state immediately
+    setTimeLeft(COOLDOWN_SECONDS);
     setIsFlipped(true);
-    setJustStamped(false);
-    // only start cooldown if they actually stamped
-    if (justStamped) {
-      setTimeLeft(COOLDOWN_SECONDS);
-    }
   }
 
-  function handleFirstVisitGotIt() {
-    setIsFlipped(true);
+  // return visit "Ok I understand" — flips front, starts cooldown
+  function handleGotIt() {
+    setJustStamped(false);
     setTimeLeft(COOLDOWN_SECONDS);
+    setIsFlipped(true);
   }
 
   function handleFlipBackOnly() {
@@ -78,12 +81,10 @@ export default function DecisionCard({
     ? '#FFF4EE'
     : 'var(--color-card-bg)';
 
-  // what to show on the back face
   function renderBackContent() {
 
-    // ── FIRST VISIT ──────────────────────────────
-    // 1 stamp already there, just instructions + got it
-    if (isFirstVisit) {
+    // ── FIRST VISIT — no stamp button, instructions only ──
+    if (showingFirstVisit) {
       return (
         <div className="fade-in" style={{
           display: 'flex',
@@ -124,7 +125,7 @@ export default function DecisionCard({
       );
     }
 
-    // ── RETURN VISIT — after stamping ─────────────
+    // ── RETURN VISIT — after stamping ──
     if (justStamped) {
       return (
         <div className="fade-in" style={{
@@ -166,7 +167,7 @@ export default function DecisionCard({
       );
     }
 
-    // ── RETURN VISIT — before stamping ────────────
+    // ── RETURN VISIT — before stamping ──
     return (
       <div className="fade-in" style={{
         display: 'flex',
@@ -224,7 +225,7 @@ export default function DecisionCard({
             maxStamps={MAX_STAMPS}
             onFlip={handleFlipToBack}
             timeLeft={timeLeft}
-            isFirstVisit={isFirstVisit}
+            isFirstVisit={showingFirstVisit}
           />
 
           {/* BACK */}
